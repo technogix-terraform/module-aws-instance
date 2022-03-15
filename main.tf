@@ -88,6 +88,10 @@ resource "aws_instance" "instance" {
         }
     }
 
+    metadata_options {
+        http_tokens = "required"
+    }
+
     root_block_device {
         encrypted     = true
         kms_key_id     = aws_kms_key.key.arn
@@ -141,9 +145,10 @@ resource "aws_security_group" "subnet" {
     count         = length(var.networks)
 
     name          = "${var.project}-instance-${var.name}-subnet${count.index}"
-      vpc_id      = var.vpc
+    description   = "security group for instance ${var.name}"
+    vpc_id      = var.vpc
 
-      tags = {
+    tags = {
         Name            = "${var.project}.${var.environment}.${var.module}.instance.${var.name}.subnet${count.index}.nsg"
         Environment     = var.environment
         Owner           = var.email
